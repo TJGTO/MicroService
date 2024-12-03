@@ -1,7 +1,7 @@
 services:
   auth-service:
     build:
-      context: ./Services/AuthService
+      context: ./Services/Auth_Service
       dockerfile: Dockerfile
 
     image: auth-servicee:latest
