@@ -1,10 +1,10 @@
 services:
+  # Authentication Service
   auth-service:
     build:
       context: ./Services/Auth_Service
       dockerfile: Dockerfile
-
-    image: auth-servicee:latest
+    image: auth-service:latest
     ports:
       - "3001:3001"
     environment:
@@ -18,10 +18,10 @@ services:
       SECRET_SALT: saltbay
       SALT_ROUNDS: 10
       SERVICE_NAME: authService
-
     depends_on:
       - postgres
 
+  # PostgreSQL Database
   postgres:
     image: postgres:latest
     environment:
@@ -33,11 +33,11 @@ services:
     volumes:
       - ./docker-volumes/postgres:/var/lib/postgresql
 
+  # API Gateway Service
   gateway-service:
     build:
       context: ./Services/GateWayService
       dockerfile: Dockerfile
-
     image: gateway-service:latest
     ports:
       - "3000:3000"
@@ -46,4 +46,41 @@ services:
       JWT_SECRET: ManurChop
       AUTH_SERVICE_NAME: authService
     depends_on:
+      - auth-service
       - postgres
+
+  # Zookeeper for Kafka
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+
+  # Kafka Broker
+  kafka:
+    image: wurstmeister/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_BROKER_ID: 1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - zookeeper
+
+  # Kafka UI
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+    depends_on:
+      - kafka
