@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { startServer } from "./config/databaseConfig";
+import { createKafkaProducer } from "./queue/producer";
 import userRoutes from "./routes/userRoutes";
 import dotenv from "dotenv";
 dotenv.config();
@@ -11,6 +12,7 @@ const version = "v1";
 app.use(express.json());
 
 startServer();
+createKafkaProducer();
 
 app.use(`/api/${version}`, userRoutes);
 
