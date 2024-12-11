@@ -33,6 +33,16 @@ services:
     volumes:
       - ./docker-volumes/postgres:/var/lib/postgresql
 
+  # mongodb Database
+  mongodb:
+    container_name: mongodb_container
+    image: mongo:latest
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - ./docker-volumes/mongo:/data/db
+
   # API Gateway Service
   gateway-service:
     build:
@@ -84,3 +94,15 @@ services:
       KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
     depends_on:
       - kafka
+
+  log-notification-service:
+    build:
+      context: ./Services/notiicationService
+      dockerfile: Dockerfile
+    image: log-notification-service:latest
+    depends_on:
+      - kafka
+      - mongodb
+    environment:
+      KAFKA_BROKER: kafka:9092
+      MONGO_URI: mongodb://mongodb_container:27017/logs
