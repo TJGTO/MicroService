@@ -1,0 +1,13 @@
+# zookeeper-headless-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-headless
+  namespace: production
+spec:
+  clusterIP: None
+  selector:
+    app: zookeeper
+  ports:
+    - port: 2181
+      targetPort: 2181
