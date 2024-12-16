@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+  namespace: production
+  labels:
+    app: auth-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth-service
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: tjgto98/auth-service:withoutkafka
+          ports:
+            - containerPort: 3001
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+          env:
+            - name: DB_HOST
+              value: jobber-postgres
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_USER
+              value: jobber
+            - name: DB_PASS
+              value: api
+            - name: DB_NAME
+              value: authDB
+            - name: DB_DIALECT
+              value: postgres
+            - name: JWT_SECRET
+              value: ManurChop
+            - name: SECRET_SALT
+              value: saltbay
+            - name: SALT_ROUNDS
+              value: "10"
+            - name: SERVICE_NAME
+              value: authService
+            - name: KAFKA_BROKER
+              value: kafka-headless:9092
+          imagePullPolicy: Always

@@ -17,7 +17,7 @@ export const createUserController = async (req: any, res: any) => {
       lastName,
     });
     const { password: _, ...userWithoutPassword } = user.toJSON();
-    sendLogMessage(`User signedUp with email ${email}`);
+    //sendLogMessage(`User signedUp with email ${email}`);
     return res.status(201).json({
       message: "User created successfully.",
       user: userWithoutPassword,
@@ -39,7 +39,7 @@ export const loginUserController = async (req: any, res: any) => {
     }
 
     const data = await loginUser({ email, password });
-    sendLogMessage(`User signedIn with email ${email}`);
+    //sendLogMessage(`User signedIn with email ${email}`);
 
     return res.status(200).json({
       message: "Login successful",

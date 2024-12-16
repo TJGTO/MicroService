@@ -12,7 +12,7 @@ const version = "v1";
 app.use(express.json());
 
 startServer();
-createKafkaProducer();
+//createKafkaProducer();
 
 app.use(`/api/${version}`, userRoutes);
 
