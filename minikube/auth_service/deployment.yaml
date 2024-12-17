@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: auth-service
-          image: tjgto98/auth-service:withoutkafka
+          image: tjgto98/auth-service:latest
           ports:
             - containerPort: 3001
           resources:

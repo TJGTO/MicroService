@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: zookeeper
+  namespace: production
+spec:
+  serviceName: "zookeeper-headless"
+  replicas: 1 # Only 1 replica
+  selector:
+    matchLabels:
+      app: zookeeper
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+        - name: zookeeper
+          image: wurstmeister/zookeeper:latest
+          ports:
+            - name: client
+              containerPort: 2181
+            - name: follower
+              containerPort: 2888
+            - name: election
+              containerPort: 3888
+          volumeMounts:
+            - name: data
+              mountPath: /data
+            - name: log
+              mountPath: /datalog
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: zookeeper-storage
+        resources:
+          requests:
+            storage: 1Gi
+    - metadata:
+        name: log
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: zookeeper-storage
+        resources:
+          requests:
+            storage: 1Gi

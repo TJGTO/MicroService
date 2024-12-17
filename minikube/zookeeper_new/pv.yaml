@@ -2,15 +2,15 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: zookeeper-pv
-  namespace: production
+  name: zookeeper-pv-0
 spec:
   capacity:
-    storage: 1Gi
+    storage: 10Gi
   accessModes:
     - ReadWriteOnce
+  storageClassName: zookeeper-local-storage
   hostPath:
-    path: /data/zookeeper
+    path: /data/zookeeper/zookeeper-0
 
 ---
 # zookeeper-persistent-volume-claim.yaml
@@ -18,7 +18,9 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: zookeeper-pvc
+  namespace: production
 spec:
+  storageClassName: zookeeper-local-storage
   accessModes:
     - ReadWriteOnce
   resources:
